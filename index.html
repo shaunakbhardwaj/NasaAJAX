@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="text-align: center; background-color: antiquewhite;">
+    
+        <label for="start">Start Date:</label>
+        <input type="date" id="start" name="start">
+        
+        <br>
+        <br>
+
+        <label for="end">End date:</label>
+        <input type="date" id="end" name="end">
+        
+        <br>
+        <br>
+
+        <input type="submit" onclick="engage()">
+        <br>
+        <br>
+        
+        <select id="myData" onchange="displaySelection()">
+            <option value="null" selected>Please select...</option>
+        </select>
+      
+        <div id="result">
+            
+        </div>
+         
+        
+        
+        
+        <script>
+        
+
+        //api key: ar1hMOBUwhg9NndRPLQXJEcCht1pXD3mvCZ5oyy0
+
+        var shaunakObject;
+        function engage(){
+            var url="https://api.nasa.gov/planetary/apod?";
+            var startDate= document.getElementById("start").value;
+            var endDate= document.getElementById("end").value;
+
+            url+="api_key=ar1hMOBUwhg9NndRPLQXJEcCht1pXD3mvCZ5oyy0&start_date="+startDate+"&end_date="+endDate;
+            shaunakObject= JSON.parse(getJSONSync(url));
+            
+            var options='<option value="null" selected>Please select...</option>';
+            for (let i=0;i<shaunakObject.length;i++){
+                options+= '<option value="'+ shaunakObject[i].title + '" >'+shaunakObject[i].title + '</option>';
+            }
+
+            document.getElementById("myData").innerHTML=options;
+           
+        }      
+        
+        
+
+        function getJSONSync(url) {
+            var resp = "";
+            var xmlHttp = new XMLHttpRequest();
+
+            //check if browser supports this feature
+            if (xmlHttp !== null) {
+                //open connection for a GET request
+                xmlHttp.open("GET", url, false);
+                //send get request
+                xmlHttp.send(null);
+                //...wait for the reponse
+                resp = xmlHttp.responseText;
+            }
+            return resp;
+        } 
+
+        function displaySelection(){
+            var selected= 0;
+            for (let i=0;i<shaunakObject.length;i++)
+                if(shaunakObject[i].title==document.getElementById("myData").value){
+                    selected=i;
+                    break;
+                }
+            
+            var title,explanation;
+
+            title=shaunakObject[selected].title;
+            explanation=shaunakObject[selected].explanation;
+            if(shaunakObject[selected].title==null){
+                title="Unknown";
+            } 
+            if(shaunakObject[selected].explanation==null){
+                explanation="Unknown";
+            }
+
+            document.getElementById("result").innerHTML= '<h1>'+ title +'</h1> <img src="'+ shaunakObject[selected].url +'"> <p>'+ explanation +'</p>';
+            
+        }
+
+        </script>
+</body>
+</html>
